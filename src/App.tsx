@@ -53,6 +53,7 @@ function Header() {
         </a>
         <nav aria-label="主要导航">
           <a href="#articles">文章</a>
+          <a href="#path">方向</a>
           <a href="#about">关于</a>
           <a href={siteConfig.github} target="_blank" rel="noreferrer">
             GitHub
@@ -122,8 +123,8 @@ function HomePage() {
           <div className="hero-copy">
             <p className="eyebrow">SUMMER NOTES · SINCE 2026</p>
             <h1>
-              把正在学的，
-              <em>认真写下来。</em>
+              从软件工程出发，
+              <em>把想法做成作品。</em>
             </h1>
             <p className="hero-intro">{siteConfig.intro}</p>
             <div className="hero-actions">
@@ -141,9 +142,9 @@ function HomePage() {
             <p className="note-script">Hello, world!</p>
             <div className="note-rule" />
             <p>
-              这是我的数字花园。
+              这里是我的数字花园。
               <br />
-              不追热点，只写下真正理解和感受到的事。
+              记录代码、项目与思考，也记录从“会写”走向“能交付”的过程。
             </p>
             <div className="note-signature">
               <span>{siteConfig.name}</span>
@@ -165,7 +166,7 @@ function HomePage() {
               <div className="sun" />
               <div className="horizon line-one" />
               <div className="horizon line-two" />
-              <span>夏日 / 记录</span>
+              <span>工程 / 成长 / 记录</span>
             </div>
             <div className="featured-copy">
               <PostMeta post={featured} />
@@ -232,6 +233,26 @@ function HomePage() {
           </div>
         </section>
 
+        <section className="path-section shell" id="path" aria-labelledby="path-title">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">LEARNING PATH</p>
+              <h2 id="path-title">正在走的路</h2>
+            </div>
+            <p className="path-intro">不追求一步到位，用可以检查的作品记录长期成长。</p>
+          </div>
+          <ol className="path-grid">
+            {siteConfig.learningPath.map((item, index) => (
+              <li className="path-card" key={item.stage}>
+                <span className="path-index">0{index + 1}</span>
+                <p>{item.stage}</p>
+                <h3>{item.title}</h3>
+                <div>{item.detail}</div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
         <section className="about-section" id="about">
           <div className="shell about-grid">
             <div>
@@ -240,12 +261,18 @@ function HomePage() {
             </div>
             <div className="about-copy">
               <p>{siteConfig.role}</p>
-              <p>
-                我相信公开记录是最好的学习方式之一。这里不会只有已经完成的答案，也会保留探索中的问题、走过的弯路，以及每一次重新出发。
-              </p>
+              <p>{siteConfig.about}</p>
+              <div className="strength-grid">
+                {siteConfig.strengths.map((item) => (
+                  <div className="strength-item" key={item.title}>
+                    <span>{item.title}</span>
+                    <p>{item.detail}</p>
+                  </div>
+                ))}
+              </div>
               <div className="contact-links">
-                <a href={`mailto:${siteConfig.email}`}>写邮件 ↗</a>
                 <a href={siteConfig.github} target="_blank" rel="noreferrer">GitHub ↗</a>
+                <a href="#articles">阅读文章 ↗</a>
               </div>
             </div>
           </div>
@@ -285,7 +312,7 @@ function ArticlePage({ post }: { post: Post }) {
         </article>
         <nav className="article-next shell" aria-label="文章结尾导航">
           <a href="#/">← 查看全部文章</a>
-          <a href={`mailto:${siteConfig.email}`}>和我聊聊 ↗</a>
+          <a href={siteConfig.github} target="_blank" rel="noreferrer">访问 GitHub ↗</a>
         </nav>
       </main>
       <Footer />
