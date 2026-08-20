@@ -1,8 +1,228 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import { categories, posts, type Post } from "./data/posts";
 import { siteConfig } from "./site.config";
 
 type Category = (typeof categories)[number];
+
+const SEASONS = [
+  { id: "spring", label: "春" },
+  { id: "summer", label: "夏" },
+  { id: "autumn", label: "秋" },
+  { id: "winter", label: "冬" },
+] as const;
+
+const MODES = [
+  { id: "day", label: "日", name: "日间" },
+  { id: "night", label: "夜", name: "夜间" },
+] as const;
+
+type SeasonId = (typeof SEASONS)[number]["id"];
+type ModeId = (typeof MODES)[number]["id"];
+type ThemeId = `${SeasonId}-${ModeId}`;
+type ParticleKind = "petal" | "leaf" | "snow" | "star" | "spark" | "firefly";
+
+const THEME_COLORS: Record<ThemeId, string> = {
+  "spring-day": "#f0c5d4",
+  "spring-night": "#2a1522",
+  "summer-day": "#5eadd8",
+  "summer-night": "#102436",
+  "autumn-day": "#c44a1c",
+  "autumn-night": "#2a1208",
+  "winter-day": "#8aa6c2",
+  "winter-night": "#0d1828",
+};
+
+const SKY_BITS: Record<ThemeId, { kind: ParticleKind; count: number }[]> = {
+  "spring-day": [{ kind: "petal", count: 72 }],
+  "spring-night": [
+    { kind: "petal", count: 52 },
+    { kind: "firefly", count: 26 },
+    { kind: "star", count: 20 },
+  ],
+  "summer-day": [{ kind: "spark", count: 36 }],
+  "summer-night": [
+    { kind: "star", count: 42 },
+    { kind: "firefly", count: 34 },
+  ],
+  "autumn-day": [{ kind: "leaf", count: 70 }],
+  "autumn-night": [
+    { kind: "leaf", count: 56 },
+    { kind: "star", count: 18 },
+  ],
+  "winter-day": [{ kind: "snow", count: 88 }],
+  "winter-night": [
+    { kind: "snow", count: 96 },
+    { kind: "star", count: 22 },
+  ],
+};
+
+const LEGACY_THEMES: Record<string, ThemeId> = {
+  light: "summer-day",
+  dark: "summer-night",
+  spring: "spring-day",
+  summer: "summer-day",
+  autumn: "autumn-day",
+  winter: "winter-day",
+};
+
+function isThemeId(value: string | null): value is ThemeId {
+  return Boolean(value && value in THEME_COLORS);
+}
+
+function readSavedTheme(): ThemeId {
+  const saved = localStorage.getItem("blog-theme");
+  if (isThemeId(saved)) return saved;
+  if (saved && saved in LEGACY_THEMES) return LEGACY_THEMES[saved];
+  return "summer-day";
+}
+
+function parseTheme(theme: ThemeId): { season: SeasonId; mode: ModeId } {
+  const [season, mode] = theme.split("-") as [SeasonId, ModeId];
+  return { season, mode };
+}
+
+function themeName(theme: ThemeId) {
+  const { season, mode } = parseTheme(theme);
+  const seasonLabel = SEASONS.find((item) => item.id === season)?.label ?? "夏";
+  return `${seasonLabel}${mode === "day" ? "日" : "夜"}`;
+}
+
+type ThemeContextValue = {
+  theme: ThemeId;
+  season: SeasonId;
+  mode: ModeId;
+  setSeason: (season: SeasonId) => void;
+  setMode: (mode: ModeId) => void;
+};
+
+const ThemeContext = createContext<ThemeContextValue | null>(null);
+
+function useTheme() {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error("useTheme must be used within ThemeProvider");
+  }
+  return context;
+}
+
+function applyTheme(theme: ThemeId) {
+  const { season, mode } = parseTheme(theme);
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.dataset.season = season;
+  document.documentElement.dataset.mode = mode;
+  localStorage.setItem("blog-theme", theme);
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute("content", THEME_COLORS[theme]);
+}
+
+function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<ThemeId>(() => {
+    const initial = readSavedTheme();
+    applyTheme(initial);
+    return initial;
+  });
+  const { season, mode } = parseTheme(theme);
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
+
+  const value = useMemo<ThemeContextValue>(
+    () => ({
+      theme,
+      season,
+      mode,
+      setSeason: (nextSeason) => setTheme(`${nextSeason}-${mode}`),
+      setMode: (nextMode) => setTheme(`${season}-${nextMode}`),
+    }),
+    [theme, season, mode],
+  );
+
+  return (
+    <ThemeContext.Provider value={value}>
+      <ThemeSky theme={theme} />
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+function particleStyle(kind: ParticleKind, index: number): CSSProperties {
+  const drift = (index % 2 === 0 ? 1 : -1) * (36 + (index % 55));
+  const placed = kind === "star" || kind === "spark" || kind === "firefly";
+  const sizeMap: Record<ParticleKind, number> = {
+    petal: 28 + (index % 7) * 6,
+    leaf: 30 + (index % 7) * 6,
+    snow: 8 + (index % 8) * 4,
+    star: 4 + (index % 6),
+    spark: 12 + (index % 6) * 3,
+    firefly: 10 + (index % 5) * 3,
+  };
+  const durationMap: Record<ParticleKind, string> = {
+    petal: `${6.5 + (index % 6)}s`,
+    leaf: `${5.5 + (index % 6)}s`,
+    snow: `${4.8 + (index % 7)}s`,
+    star: `${2.2 + (index % 4) * 0.6}s`,
+    spark: `${1.6 + (index % 4) * 0.4}s`,
+    firefly: `${3.2 + (index % 5) * 0.7}s`,
+  };
+
+  return {
+    left: `${(index * 37 + 8) % 100}%`,
+    top: placed ? `${(index * 17 + 5) % 86}%` : `${-18 - (index % 18)}%`,
+    width: `${sizeMap[kind]}px`,
+    height: `${sizeMap[kind]}px`,
+    animationDelay: `${(index * 0.19) % 6}s`,
+    animationDuration: durationMap[kind],
+    ["--drift" as string]: `${drift}px`,
+  };
+}
+
+function ThemeSky({ theme }: { theme: ThemeId }) {
+  const bits = SKY_BITS[theme].flatMap((group, groupIndex) =>
+    Array.from({ length: group.count }, (_, index) => {
+      const order = groupIndex * 80 + index;
+      return (
+        <span
+          className={`sky-bit sky-bit-${group.kind}`}
+          key={`${theme}-${group.kind}-${index}`}
+          style={particleStyle(group.kind, order)}
+        />
+      );
+    }),
+  );
+
+  return (
+    <>
+      <div className="theme-sky" aria-hidden="true">
+        <div className="sky-rays" />
+        <div className="sky-aurora" />
+        <div className="sky-glow sky-glow-a" />
+        <div className="sky-glow sky-glow-b" />
+        <div className="sky-orb" />
+        <div className="sky-cloud sky-cloud-a" />
+        <div className="sky-cloud sky-cloud-b" />
+        <div className="sky-cloud sky-cloud-c" />
+        <div className="sky-ground sky-ground-a" />
+        <div className="sky-ground sky-ground-b" />
+        <div className="sky-tree sky-tree-a" />
+        <div className="sky-tree sky-tree-b" />
+      </div>
+      <div className="theme-weather" aria-hidden="true">
+        {bits}
+      </div>
+    </>
+  );
+}
 
 function useHashRoute() {
   const [hash, setHash] = useState(window.location.hash || "#/");
@@ -19,27 +239,79 @@ function useHashRoute() {
   return hash;
 }
 
-function ThemeButton() {
-  const [dark, setDark] = useState(() => {
-    const saved = localStorage.getItem("blog-theme");
-    return saved ? saved === "dark" : false;
-  });
+function ThemePicker() {
+  const { theme, season, mode, setSeason, setMode } = useTheme();
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const currentName = themeName(theme);
+  const currentSeason = SEASONS.find((item) => item.id === season) ?? SEASONS[1];
 
   useEffect(() => {
-    document.documentElement.dataset.theme = dark ? "dark" : "light";
-    localStorage.setItem("blog-theme", dark ? "dark" : "light");
-  }, [dark]);
+    if (!open) return undefined;
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   return (
-    <button
-      className="icon-button"
-      type="button"
-      onClick={() => setDark((value) => !value)}
-      aria-label={dark ? "切换为浅色主题" : "切换为深色主题"}
-      title={dark ? "浅色主题" : "深色主题"}
-    >
-      {dark ? "日" : "夜"}
-    </button>
+    <div className="theme-picker" ref={rootRef}>
+      <button
+        className="icon-button"
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-haspopup="dialog"
+        aria-label={`主题：${currentName}，打开主题选择`}
+        title={currentName}
+      >
+        {currentSeason.label}
+      </button>
+      {open && (
+        <div className="theme-menu" role="dialog" aria-label="选择季节与日夜">
+          <p className="theme-legend">日夜</p>
+          <div className="theme-row">
+            {MODES.map((item) => (
+              <button
+                className={`theme-chip${mode === item.id ? " active" : ""}`}
+                type="button"
+                key={item.id}
+                onClick={() => setMode(item.id)}
+              >
+                {item.label} · {item.name}
+              </button>
+            ))}
+          </div>
+          <p className="theme-legend">季节</p>
+          <div className="theme-row theme-row-season">
+            {SEASONS.map((item) => (
+              <button
+                className={`theme-chip${season === item.id ? " active" : ""}`}
+                type="button"
+                key={item.id}
+                onClick={() => setSeason(item.id)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <div className={`theme-live theme-swatch-${theme}`} />
+          <p className="theme-current">当前：{currentName}</p>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -54,12 +326,12 @@ function Header() {
         <nav aria-label="主要导航">
           <a href="#articles">文章</a>
           <a href="#path">方向</a>
-          <a href="#about">关于</a>
+          <a href="#/about">关于</a>
           <a href={siteConfig.github} target="_blank" rel="noreferrer">
             GitHub
           </a>
         </nav>
-        <ThemeButton />
+        <ThemePicker />
       </div>
     </header>
   );
@@ -131,7 +403,7 @@ function HomePage() {
               <a className="button button-primary" href="#articles">
                 开始阅读 <span aria-hidden="true">→</span>
               </a>
-              <a className="button button-quiet" href="#about">
+              <a className="button button-quiet" href="#/about">
                 认识我
               </a>
             </div>
@@ -252,29 +524,88 @@ function HomePage() {
             ))}
           </ol>
         </section>
+      </main>
+      <Footer />
+    </>
+  );
+}
 
-        <section className="about-section" id="about">
-          <div className="shell about-grid">
-            <div>
-              <p className="eyebrow">ABOUT THE AUTHOR</p>
-              <h2>你好，我是{siteConfig.name}。</h2>
+function AboutPage() {
+  useEffect(() => {
+    document.title = `关于 · ${siteConfig.siteName}`;
+    return () => { document.title = `${siteConfig.siteName} · 个人博客`; };
+  }, []);
+
+  return (
+    <>
+      <Header />
+      <main className="about-page">
+        <header className="about-hero shell">
+          <a className="back-link" href="#/">← 返回首页</a>
+          <p className="eyebrow">ABOUT</p>
+          <h1>你好，我是{siteConfig.name}。</h1>
+          <p className="about-lead">{siteConfig.aboutLead}</p>
+        </header>
+
+        <section className="about-facts shell" aria-label="个人资料">
+          {siteConfig.facts.map((item) => (
+            <div className="about-fact" key={item.label}>
+              <span>{item.label}</span>
+              {item.label === "GitHub" ? (
+                <a href={siteConfig.github} target="_blank" rel="noreferrer">
+                  {item.value}
+                </a>
+              ) : (
+                <strong>{item.value}</strong>
+              )}
             </div>
-            <div className="about-copy">
-              <p>{siteConfig.role}</p>
-              <p>{siteConfig.about}</p>
-              <div className="strength-grid">
-                {siteConfig.strengths.map((item) => (
-                  <div className="strength-item" key={item.title}>
-                    <span>{item.title}</span>
-                    <p>{item.detail}</p>
-                  </div>
-                ))}
+          ))}
+        </section>
+
+        {siteConfig.aboutSections.map((section) => (
+          <section className="about-story shell" key={section.title}>
+            <h2>{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+        <section className="about-panel shell" aria-labelledby="about-strengths-title">
+          <p className="eyebrow">WHAT I PRACTICE</p>
+          <h2 id="about-strengths-title">我正在练的能力</h2>
+          <div className="strength-grid about-strength-grid">
+            {siteConfig.strengths.map((item) => (
+              <div className="strength-item" key={item.title}>
+                <span>{item.title}</span>
+                <p>{item.detail}</p>
               </div>
-              <div className="contact-links">
-                <a href={siteConfig.github} target="_blank" rel="noreferrer">GitHub ↗</a>
-                <a href="#articles">阅读文章 ↗</a>
-              </div>
-            </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="about-panel shell" aria-labelledby="about-path-title">
+          <p className="eyebrow">NEXT</p>
+          <h2 id="about-path-title">接下来怎么走</h2>
+          <ol className="path-grid">
+            {siteConfig.learningPath.map((item, index) => (
+              <li className="path-card" key={item.stage}>
+                <span className="path-index">0{index + 1}</span>
+                <p>{item.stage}</p>
+                <h3>{item.title}</h3>
+                <div>{item.detail}</div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="about-panel about-contact shell">
+          <p className="eyebrow">CONTACT</p>
+          <h2>可以在这里找到我</h2>
+          <div className="contact-links">
+            <a href={siteConfig.github} target="_blank" rel="noreferrer">GitHub ↗</a>
+            <a href="#articles">阅读文章 ↗</a>
+            <a href="#/">回到首页 ↗</a>
           </div>
         </section>
       </main>
@@ -322,11 +653,15 @@ function ArticlePage({ post }: { post: Post }) {
 
 function App() {
   const hash = useHashRoute();
+  const isAbout = hash === "#about" || hash.startsWith("#/about");
   const match = hash.match(/^#\/post\/([^/?]+)/);
   const post = match ? posts.find((item) => item.slug === match[1]) : undefined;
 
-  if (match && !post) {
-    return (
+  let page: ReactNode;
+  if (isAbout) {
+    page = <AboutPage />;
+  } else if (match && !post) {
+    page = (
       <>
         <Header />
         <main className="not-found shell">
@@ -337,9 +672,11 @@ function App() {
         <Footer />
       </>
     );
+  } else {
+    page = post ? <ArticlePage post={post} /> : <HomePage />;
   }
 
-  return post ? <ArticlePage post={post} /> : <HomePage />;
+  return <ThemeProvider>{page}</ThemeProvider>;
 }
 
 export default App;
