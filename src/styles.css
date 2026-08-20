@@ -824,7 +824,7 @@ main { position: relative; z-index: 2; }
 .article-hero h1 {
   text-shadow: 0 4px 24px color-mix(in srgb, var(--paper) 78%, transparent);
 }
-.featured-section, .articles-section, .path-section {
+.featured-section, .articles-section, .path-section, .game-section {
   position: relative;
   isolation: isolate;
   padding-block: 90px;
@@ -833,7 +833,8 @@ main { position: relative; z-index: 2; }
 }
 .featured-section::before,
 .articles-section::before,
-.path-section::before {
+.path-section::before,
+.game-section::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -908,6 +909,58 @@ main { position: relative; z-index: 2; }
 .path-card > p { margin: 54px 0 10px; color: var(--ink-soft); font-size: .76rem; font-weight: 700; letter-spacing: .12em; }
 .path-card h3 { margin: 0 0 18px; font-size: 1.45rem; line-height: 1.4; }
 .path-card div { color: var(--ink-soft); font-size: .92rem; line-height: 1.85; }
+
+.articles-section { scroll-margin-top: 76px; }
+.game-section { scroll-margin-top: 76px; }
+.game-card {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--paper-raised) 88%, transparent);
+  box-shadow: 0 24px 50px color-mix(in srgb, var(--ink) 6%, transparent);
+}
+.game-hud {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px 0;
+  color: var(--ink-soft);
+  font: 600 .78rem "Space Grotesk", sans-serif;
+  letter-spacing: .06em;
+}
+.game-board {
+  position: relative;
+  overflow: hidden;
+  margin: 16px 16px 16px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--paper) 55%, transparent);
+  touch-action: none;
+  user-select: none;
+}
+.game-board canvas {
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+.game-board[data-cursor="hidden"] canvas {
+  cursor: none;
+}
+.game-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  background: color-mix(in srgb, var(--paper) 52%, transparent);
+  backdrop-filter: blur(10px);
+}
+.game-overlay p {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: -.02em;
+}
 
 .about-page { padding-bottom: 90px; }
 .about-hero { padding: 90px 0 40px; }
@@ -1065,14 +1118,16 @@ main { position: relative; z-index: 2; }
   .hero-intro { font-size: .98rem; }
   .hero-actions { flex-wrap: wrap; }
   .hero-note { width: 94%; padding-inline: 28px; }
-  .featured-section, .articles-section, .path-section { padding-block: 70px; }
+  .featured-section, .articles-section, .path-section, .game-section { padding-block: 70px; }
   .theme-menu { width: min(268px, calc(100vw - 24px)); right: -6px; }
   .section-number { display: none; }
   .featured-art { min-height: 300px; }
   .featured-copy { min-height: 360px; padding: 40px 26px; }
   .article-heading { align-items: start; flex-direction: column; gap: 24px; }
-  .path-section .section-heading { align-items: start; flex-direction: column; gap: 20px; }
+  .path-section .section-heading,
+  .game-section .section-heading { align-items: start; flex-direction: column; gap: 20px; }
   .path-intro { text-align: left; }
+  .game-hud { padding-inline: 16px; font-size: .7rem; }
   .search-box { width: 100%; }
   .post-row { grid-template-columns: 40px 1fr; gap: 10px; padding: 24px 20px; }
   .round-link { display: none; }

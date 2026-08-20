@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { categories, posts, type Post } from "./data/posts";
+import { SeasonGame } from "./SeasonGame";
 import { siteConfig } from "./site.config";
 
 type Category = (typeof categories)[number];
@@ -224,13 +225,27 @@ function ThemeSky({ theme }: { theme: ThemeId }) {
   );
 }
 
+function isPageRoute(hash: string) {
+  return (
+    hash === "#/" ||
+    hash === "#" ||
+    hash === "" ||
+    hash === "#about" ||
+    hash.startsWith("#/about") ||
+    hash.startsWith("#/post/")
+  );
+}
+
 function useHashRoute() {
   const [hash, setHash] = useState(window.location.hash || "#/");
 
   useEffect(() => {
     const update = () => {
-      setHash(window.location.hash || "#/");
-      window.scrollTo({ top: 0, behavior: "instant" });
+      const next = window.location.hash || "#/";
+      setHash(next);
+      if (isPageRoute(next)) {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
     };
     window.addEventListener("hashchange", update);
     return () => window.removeEventListener("hashchange", update);
@@ -324,6 +339,7 @@ function Header() {
           <span>{siteConfig.siteName}</span>
         </a>
         <nav aria-label="主要导航">
+          <a href="#game">游戏</a>
           <a href="#articles">文章</a>
           <a href="#path">方向</a>
           <a href="#/about">关于</a>
@@ -380,6 +396,7 @@ function PostMeta({ post }: { post: Post }) {
 }
 
 function HomePage() {
+  const { season } = useTheme();
   const [category, setCategory] = useState<Category>("全部");
   const [query, setQuery] = useState("");
   const featured = posts.find((post) => post.featured) ?? posts[0];
@@ -393,6 +410,15 @@ function HomePage() {
         .includes(keyword);
     return inCategory && matches;
   });
+
+  useEffect(() => {
+    const id = window.location.hash.slice(1);
+    if (id === "game" || id === "articles" || id === "path") {
+      requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      });
+    }
+  }, []);
 
   return (
     <>
@@ -413,6 +439,9 @@ function HomePage() {
               <a className="button button-quiet" href="#/about">
                 认识我
               </a>
+              <a className="button button-quiet" href="#game">
+                玩一把
+              </a>
             </div>
           </div>
           <aside className="hero-note" aria-label="博主信息">
@@ -431,6 +460,8 @@ function HomePage() {
             </div>
           </aside>
         </section>
+
+        <SeasonGame key={season} season={season} />
 
         <section className="featured-section shell" aria-labelledby="featured-title">
           <div className="section-heading">
