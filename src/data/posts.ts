@@ -14,10 +14,48 @@ export type Post = {
   readingTime: string;
   featured?: boolean;
   number: string;
+  externalUrl?: string;
   sections: PostSection[];
 };
 
 export const posts: Post[] = [
+  {
+    slug: "kotlin-syntax-course",
+    title: "Kotlin 全语法教程：从零基础到 Android 独立开发",
+    excerpt:
+      "我把一套完整的中文 Kotlin / Android 课程做成了可搜索、可测验、能离线保存进度的网页，现在可以直接在线打开学习。",
+    category: "技术",
+    date: "2026-08-20",
+    displayDate: "2026.08.20",
+    readingTime: "在线教程",
+    number: "05",
+    externalUrl: "https://skychutt.github.io/Kotlin_study/",
+    sections: [
+      {
+        type: "paragraph",
+        text: "暑假里我整理了一套从 Kotlin 语法到现代 Android 独立开发的中文教程，做成了带目录、搜索、进度保存、代码复制、深色模式和测验的网页。源码在 GitHub，网页也可以直接打开学习。",
+      },
+      { type: "heading", text: "这套教程里有什么" },
+      {
+        type: "list",
+        items: [
+          "Kotlin 语法：变量、空安全、函数、类、集合、协程与 Flow",
+          "Android 基础：生命周期、Intent、权限与项目结构",
+          "Jetpack Compose、Navigation、ViewModel 与数据层",
+          "网络、Room、离线同步，以及可验收的毕业项目",
+        ],
+      },
+      {
+        type: "quote",
+        text: "最好的教程不是收藏夹里的链接，而是自己能打开、能改、能一直学下去的作品。",
+      },
+      { type: "heading", text: "怎么开始" },
+      {
+        type: "paragraph",
+        text: "点下方按钮即可打开在线网页。仓库地址是 https://github.com/Skychutt/Kotlin_study ，也可以把 HTML 下载下来离线阅读，学习进度会保存在浏览器里。",
+      },
+    ],
+  },
   {
     slug: "why-i-built-this-blog",
     title: "为什么我要在这个夏天，认真搭一个博客",

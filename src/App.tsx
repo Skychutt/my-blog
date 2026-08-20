@@ -35,8 +35,8 @@ const THEME_COLORS: Record<ThemeId, string> = {
   "spring-night": "#2a1522",
   "summer-day": "#5eadd8",
   "summer-night": "#102436",
-  "autumn-day": "#c44a1c",
-  "autumn-night": "#2a1208",
+  "autumn-day": "#d7c39a",
+  "autumn-night": "#241e16",
   "winter-day": "#8aa6c2",
   "winter-night": "#0d1828",
 };
@@ -360,6 +360,15 @@ function Footer() {
   );
 }
 
+function postHref(post: Post) {
+  return post.externalUrl ?? `#/post/${post.slug}`;
+}
+
+function postLinkProps(post: Post) {
+  if (!post.externalUrl) return {};
+  return { target: "_blank", rel: "noreferrer" } as const;
+}
+
 function PostMeta({ post }: { post: Post }) {
   return (
     <div className="post-meta">
@@ -374,18 +383,16 @@ function HomePage() {
   const [category, setCategory] = useState<Category>("全部");
   const [query, setQuery] = useState("");
   const featured = posts.find((post) => post.featured) ?? posts[0];
-  const visiblePosts = useMemo(() => {
-    const keyword = query.trim().toLowerCase();
-    return posts.filter((post) => {
-      const inCategory = category === "全部" || post.category === category;
-      const matches =
-        !keyword ||
-        `${post.title}${post.excerpt}${post.category}`
-          .toLowerCase()
-          .includes(keyword);
-      return inCategory && matches;
-    });
-  }, [category, query]);
+  const keyword = query.trim().toLowerCase();
+  const visiblePosts = posts.filter((post) => {
+    const inCategory = category === "全部" || post.category === category;
+    const matches =
+      !keyword ||
+      `${post.title}${post.excerpt}${post.category}`
+        .toLowerCase()
+        .includes(keyword);
+    return inCategory && matches;
+  });
 
   return (
     <>
@@ -433,7 +440,7 @@ function HomePage() {
             </div>
             <span className="section-number">{featured.number}</span>
           </div>
-          <a className="featured-card" href={`#/post/${featured.slug}`}>
+          <a className="featured-card" href={postHref(featured)} {...postLinkProps(featured)}>
             <div className="featured-art" aria-hidden="true">
               <div className="sun" />
               <div className="horizon line-one" />
@@ -444,7 +451,7 @@ function HomePage() {
               <PostMeta post={featured} />
               <h3>{featured.title}</h3>
               <p>{featured.excerpt}</p>
-              <span className="text-link">阅读全文 ↗</span>
+              <span className="text-link">{featured.externalUrl ? "打开教程 ↗" : "阅读全文 ↗"}</span>
             </div>
           </a>
         </section>
@@ -485,11 +492,11 @@ function HomePage() {
                 <div className="post-summary">
                   <PostMeta post={post} />
                   <h3>
-                    <a href={`#/post/${post.slug}`}>{post.title}</a>
+                    <a href={postHref(post)} {...postLinkProps(post)}>{post.title}</a>
                   </h3>
                   <p>{post.excerpt}</p>
                 </div>
-                <a className="round-link" href={`#/post/${post.slug}`} aria-label={`阅读：${post.title}`}>
+                <a className="round-link" href={postHref(post)} {...postLinkProps(post)} aria-label={`阅读：${post.title}`}>
                   ↗
                 </a>
               </article>
@@ -629,6 +636,11 @@ function ArticlePage({ post }: { post: Post }) {
           <PostMeta post={post} />
           <h1>{post.title}</h1>
           <p>{post.excerpt}</p>
+          {post.externalUrl && (
+            <a className="button button-primary article-cta" href={post.externalUrl} target="_blank" rel="noreferrer">
+              打开在线教程 ↗
+            </a>
+          )}
         </header>
         <article className="article-body">
           {post.sections.map((section, index) => {
@@ -643,7 +655,9 @@ function ArticlePage({ post }: { post: Post }) {
         </article>
         <nav className="article-next shell" aria-label="文章结尾导航">
           <a href="#/">← 查看全部文章</a>
-          <a href={siteConfig.github} target="_blank" rel="noreferrer">访问 GitHub ↗</a>
+          <a href={post.externalUrl ?? siteConfig.github} target="_blank" rel="noreferrer">
+            {post.externalUrl ? "打开在线教程 ↗" : "访问 GitHub ↗"}
+          </a>
         </nav>
       </main>
       <Footer />
