@@ -6,4 +6,8 @@ export const siteConfig = {
   email: "hello@example.com",
   github: "https://github.com/your-name",
   location: "中国",
+  icpFiling: {
+    number: "京ICP备2026053811号-1",
+    url: "https://beian.miit.gov.cn/",
+  },
 };

@@ -68,9 +68,19 @@ function Footer() {
   return (
     <footer className="site-footer">
       <div className="shell footer-inner">
-        <p>
-          © {new Date().getFullYear()} {siteConfig.name} · 保持好奇，持续记录。
-        </p>
+        <div className="footer-meta">
+          <p>
+            © {new Date().getFullYear()} {siteConfig.name} · 保持好奇，持续记录。
+          </p>
+          <a
+            className="icp-link"
+            href={siteConfig.icpFiling.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {siteConfig.icpFiling.number}
+          </a>
+        </div>
         <a href="#/">回到首页 ↑</a>
       </div>
     </footer>

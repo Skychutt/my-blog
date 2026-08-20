@@ -154,6 +154,8 @@ nav a:hover::after { transform: scaleX(1); transform-origin: left; }
 .contact-links { display: flex; gap: 28px; margin-top: 34px; color: var(--paper); font-weight: 700; }
 .site-footer { border-top: 1px solid var(--line); }
 .footer-inner { display: flex; justify-content: space-between; gap: 20px; padding-block: 32px; color: var(--ink-soft); font-size: .78rem; }
+.footer-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.icp-link:hover { color: var(--accent); }
 
 .article-page { min-height: 70vh; }
 .article-hero { padding: 90px 0 65px; text-align: center; }
