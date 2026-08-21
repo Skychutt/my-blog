@@ -1084,7 +1084,67 @@ main { position: relative; z-index: 2; }
 .article-hero .post-meta { justify-content: center; }
 .article-hero h1 { max-width: 900px; margin: 28px auto 24px; font-size: clamp(2.8rem, 6vw, 5.8rem); line-height: 1.17; letter-spacing: -.055em; }
 .article-hero > p { max-width: 700px; margin: 0 auto; color: var(--ink-soft); font-size: 1.08rem; line-height: 1.9; }
-.article-cta { margin: 32px auto 0; }
+.article-cover {
+  width: min(920px, 100%);
+  margin: 36px auto 0;
+}
+.article-cover img {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+  object-fit: cover;
+}
+.article-figure img,
+.article-gallery img {
+  display: block;
+  width: 100%;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+}
+.article-figure img {
+  max-height: 340px;
+  object-fit: contain;
+  background: var(--paper-raised);
+}
+.article-figure,
+.article-gallery {
+  margin: 36px 0;
+}
+.article-figure figcaption,
+.article-gallery figcaption {
+  margin-top: 12px;
+  color: var(--ink-soft);
+  font-size: .88rem;
+  line-height: 1.7;
+  text-align: center;
+}
+.article-gallery > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.article-gallery img {
+  height: 220px;
+  object-fit: cover;
+  background: color-mix(in srgb, var(--paper-raised) 80%, transparent);
+}
+.article-start {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  margin-top: 56px;
+  padding: 36px 24px;
+  border: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--paper-raised) 88%, transparent);
+  text-align: center;
+}
+.article-start p {
+  margin: 0;
+  color: var(--ink-soft);
+}
 .article-body { width: min(720px, calc(100% - 48px)); margin: 0 auto; padding: 65px 0 90px; border-top: 1px solid var(--line); }
 .article-body p, .article-body li { font-size: 1.06rem; line-height: 2.1; }
 .article-body h2 { margin: 64px 0 20px; font-size: 2rem; letter-spacing: -.03em; }
@@ -1140,7 +1200,8 @@ main { position: relative; z-index: 2; }
   .footer-inner, .article-next { flex-direction: column; }
   .article-hero { padding-top: 55px; }
   .back-link { margin-bottom: 42px; }
-  .article-body { width: calc(100% - 36px); }
+  .article-gallery > div { grid-template-columns: 1fr; }
+  .article-gallery img { height: 200px; }
   .article-body p, .article-body li { font-size: 1rem; }
 }
 

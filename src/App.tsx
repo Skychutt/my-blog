@@ -382,12 +382,7 @@ function Footer() {
 }
 
 function postHref(post: Post) {
-  return post.externalUrl ?? `#/post/${post.slug}`;
-}
-
-function postLinkProps(post: Post) {
-  if (!post.externalUrl) return {};
-  return { target: "_blank", rel: "noreferrer" } as const;
+  return `#/post/${post.slug}`;
 }
 
 function PostMeta({ post }: { post: Post }) {
@@ -479,7 +474,7 @@ function HomePage() {
             </div>
             <span className="section-number">{featured.number}</span>
           </div>
-          <a className="featured-card" href={postHref(featured)} {...postLinkProps(featured)}>
+          <a className="featured-card" href={postHref(featured)}>
             <div className="featured-art" aria-hidden="true">
               <div className="sun" />
               <div className="horizon line-one" />
@@ -490,7 +485,7 @@ function HomePage() {
               <PostMeta post={featured} />
               <h3>{featured.title}</h3>
               <p>{featured.excerpt}</p>
-              <span className="text-link">{featured.externalUrl ? "打开教程 ↗" : "阅读全文 ↗"}</span>
+              <span className="text-link">阅读全文 ↗</span>
             </div>
           </a>
         </section>
@@ -531,11 +526,11 @@ function HomePage() {
                 <div className="post-summary">
                   <PostMeta post={post} />
                   <h3>
-                    <a href={postHref(post)} {...postLinkProps(post)}>{post.title}</a>
+                    <a href={postHref(post)}>{post.title}</a>
                   </h3>
                   <p>{post.excerpt}</p>
                 </div>
-                <a className="round-link" href={postHref(post)} {...postLinkProps(post)} aria-label={`阅读：${post.title}`}>
+                <a className="round-link" href={postHref(post)} aria-label={`阅读：${post.title}`}>
                   ↗
                 </a>
               </article>
@@ -657,10 +652,10 @@ function ArticlePage({ post }: { post: Post }) {
           <PostMeta post={post} />
           <h1>{post.title}</h1>
           <p>{post.excerpt}</p>
-          {post.externalUrl && (
-            <a className="button button-primary article-cta" href={post.externalUrl} target="_blank" rel="noreferrer">
-              打开在线教程 ↗
-            </a>
+          {post.coverImage && (
+            <figure className="article-cover">
+              <img src={post.coverImage.src} alt={post.coverImage.alt} />
+            </figure>
           )}
         </header>
         <article className="article-body">
@@ -670,15 +665,45 @@ function ArticlePage({ post }: { post: Post }) {
             if (section.type === "list") return (
               <ul key={index}>{section.items.map((item) => <li key={item}>{item}</li>)}</ul>
             );
+            if (section.type === "image") {
+              return (
+                <figure className="article-figure" key={index}>
+                  <img src={section.src} alt={section.alt} />
+                  {section.caption ? <figcaption>{section.caption}</figcaption> : null}
+                </figure>
+              );
+            }
+            if (section.type === "gallery") {
+              return (
+                <figure className="article-gallery" key={index}>
+                  <div>
+                    {section.images.map((image) => (
+                      <img src={image.src} alt={image.alt} key={image.src} />
+                    ))}
+                  </div>
+                  {section.caption ? <figcaption>{section.caption}</figcaption> : null}
+                </figure>
+              );
+            }
             return <p key={index}>{section.text}</p>;
           })}
-          <div className="article-end">完 · 感谢阅读</div>
+          {post.externalUrl && (
+            <div className="article-start">
+              <p>看完上面的简介，可以从这里进入学习页。</p>
+              <a className="button button-primary" href={post.externalUrl} target="_blank" rel="noreferrer">
+                开始学习 <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          )}
+          <div className="article-end">{post.externalUrl ? "先读简介，再开始学" : "完 · 感谢阅读"}</div>
         </article>
         <nav className="article-next shell" aria-label="文章结尾导航">
           <a href="#/">← 查看全部文章</a>
-          <a href={post.externalUrl ?? siteConfig.github} target="_blank" rel="noreferrer">
-            {post.externalUrl ? "打开在线教程 ↗" : "访问 GitHub ↗"}
-          </a>
+          {post.externalUrl ? (
+            <a href={post.externalUrl} target="_blank" rel="noreferrer">开始学习 ↗</a>
+          ) : (
+            <a href={siteConfig.github} target="_blank" rel="noreferrer">访问 GitHub ↗</a>
+          )}
         </nav>
       </main>
       <Footer />
