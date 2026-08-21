@@ -724,7 +724,7 @@ function PathPage() {
 }
 
 function SitePage() {
-  const { title, eyebrow, lead, sections } = siteConfig.siteAbout;
+  const { title, eyebrow, lead, facts, sections } = siteConfig.siteAbout;
 
   useEffect(() => {
     document.title = `关于此网站 · ${siteConfig.siteName}`;
@@ -742,6 +742,15 @@ function SitePage() {
           {lead ? <p className="about-lead">{lead}</p> : null}
         </header>
 
+        <section className="about-facts shell" aria-label="本站资料">
+          {facts.map((item) => (
+            <div className="about-fact" key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+            </div>
+          ))}
+        </section>
+
         {sections.map((section) => (
           <section className="about-story shell" key={section.title}>
             <h2>{section.title}</h2>
@@ -750,13 +759,6 @@ function SitePage() {
             ))}
           </section>
         ))}
-
-        {sections.length === 0 && (
-          <section className="about-story shell" aria-label="待补充的网站介绍">
-            <h2>正文稍后写在这里</h2>
-            <p>这一页用来介绍网站本身。结构已经就绪，内容等你定下来再填。</p>
-          </section>
-        )}
       </main>
       <Footer />
     </>
