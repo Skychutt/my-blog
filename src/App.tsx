@@ -24,6 +24,7 @@ const SEASONS = [
 const MODES = [
   { id: "day", label: "日", name: "日间" },
   { id: "night", label: "夜", name: "夜间" },
+  { id: "plain", label: "白", name: "白底" },
 ] as const;
 
 type SeasonId = (typeof SEASONS)[number]["id"];
@@ -40,30 +41,38 @@ const THEME_COLORS: Record<ThemeId, string> = {
   "autumn-night": "#241e16",
   "winter-day": "#8aa6c2",
   "winter-night": "#0d1828",
+  "spring-plain": "#ffffff",
+  "summer-plain": "#ffffff",
+  "autumn-plain": "#ffffff",
+  "winter-plain": "#ffffff",
 };
 
 const SKY_BITS: Record<ThemeId, { kind: ParticleKind; count: number }[]> = {
-  "spring-day": [{ kind: "petal", count: 72 }],
+  "spring-day": [{ kind: "petal", count: 26 }],
   "spring-night": [
-    { kind: "petal", count: 52 },
-    { kind: "firefly", count: 26 },
-    { kind: "star", count: 20 },
+    { kind: "petal", count: 16 },
+    { kind: "firefly", count: 8 },
+    { kind: "star", count: 6 },
   ],
-  "summer-day": [{ kind: "spark", count: 36 }],
+  "summer-day": [{ kind: "spark", count: 12 }],
   "summer-night": [
-    { kind: "star", count: 42 },
-    { kind: "firefly", count: 34 },
+    { kind: "star", count: 14 },
+    { kind: "firefly", count: 10 },
   ],
-  "autumn-day": [{ kind: "leaf", count: 70 }],
+  "autumn-day": [{ kind: "leaf", count: 22 }],
   "autumn-night": [
-    { kind: "leaf", count: 56 },
-    { kind: "star", count: 18 },
+    { kind: "leaf", count: 18 },
+    { kind: "star", count: 6 },
   ],
-  "winter-day": [{ kind: "snow", count: 88 }],
+  "winter-day": [{ kind: "snow", count: 28 }],
   "winter-night": [
-    { kind: "snow", count: 96 },
-    { kind: "star", count: 22 },
+    { kind: "snow", count: 32 },
+    { kind: "star", count: 6 },
   ],
+  "spring-plain": [],
+  "summer-plain": [],
+  "autumn-plain": [],
+  "winter-plain": [],
 };
 
 const LEGACY_THEMES: Record<string, ThemeId> = {
@@ -93,6 +102,7 @@ function parseTheme(theme: ThemeId): { season: SeasonId; mode: ModeId } {
 
 function themeName(theme: ThemeId) {
   const { season, mode } = parseTheme(theme);
+  if (mode === "plain") return "白底";
   const seasonLabel = SEASONS.find((item) => item.id === season)?.label ?? "夏";
   return `${seasonLabel}${mode === "day" ? "日" : "夜"}`;
 }
@@ -296,12 +306,12 @@ function ThemePicker() {
         aria-label={`主题：${currentName}，打开主题选择`}
         title={currentName}
       >
-        {currentSeason.label}
+        {mode === "plain" ? "白" : currentSeason.label}
       </button>
       {open && (
-        <div className="theme-menu" role="dialog" aria-label="选择季节与日夜">
-          <p className="theme-legend">日夜</p>
-          <div className="theme-row">
+        <div className="theme-menu" role="dialog" aria-label="选择外观">
+          <p className="theme-legend">外观</p>
+          <div className="theme-row theme-row-mode">
             {MODES.map((item) => (
               <button
                 className={`theme-chip${mode === item.id ? " active" : ""}`}
@@ -309,7 +319,7 @@ function ThemePicker() {
                 key={item.id}
                 onClick={() => setMode(item.id)}
               >
-                {item.label} · {item.name}
+                {item.name}
               </button>
             ))}
           </div>
