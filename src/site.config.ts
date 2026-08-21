@@ -95,4 +95,10 @@ export const siteConfig = {
     number: "京ICP备2026053811号-1",
     url: "https://beian.miit.gov.cn/",
   },
+  siteAbout: {
+    eyebrow: "THE SITE",
+    title: "关于此网站",
+    lead: "",
+    sections: [] as { title: string; paragraphs: string[] }[],
+  },
 };

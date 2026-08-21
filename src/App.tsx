@@ -231,7 +231,11 @@ function isPageRoute(hash: string) {
     hash === "#" ||
     hash === "" ||
     hash === "#about" ||
-    hash.startsWith("#/about") ||
+    hash === "#/about" ||
+    hash === "#site" ||
+    hash === "#/site" ||
+    hash === "#path" ||
+    hash === "#/path" ||
     hash.startsWith("#/post/")
   );
 }
@@ -341,8 +345,9 @@ function Header() {
         <nav aria-label="主要导航">
           <a href="#game">游戏</a>
           <a href="#articles">文章</a>
-          <a href="#path">方向</a>
+          <a href="#/path">方向</a>
           <a href="#/about">关于</a>
+          <a href="#/site">本站</a>
           <a href={siteConfig.github} target="_blank" rel="noreferrer">
             GitHub
           </a>
@@ -413,7 +418,7 @@ function HomePage() {
 
   useEffect(() => {
     const id = window.location.hash.slice(1);
-    if (id === "game" || id === "articles" || id === "path") {
+    if (id === "game" || id === "articles") {
       requestAnimationFrame(() => {
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
       });
@@ -441,6 +446,9 @@ function HomePage() {
               </a>
               <a className="button button-quiet" href="#game">
                 玩一把
+              </a>
+              <a className="button button-quiet" href="#/site">
+                关于本站
               </a>
             </div>
           </div>
@@ -542,26 +550,6 @@ function HomePage() {
             )}
           </div>
         </section>
-
-        <section className="path-section shell" id="path" aria-labelledby="path-title">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">LEARNING PATH</p>
-              <h2 id="path-title">正在走的路</h2>
-            </div>
-            <p className="path-intro">不追求一步到位，用可以检查的作品记录长期成长。</p>
-          </div>
-          <ol className="path-grid">
-            {siteConfig.learningPath.map((item, index) => (
-              <li className="path-card" key={item.stage}>
-                <span className="path-index">0{index + 1}</span>
-                <p>{item.stage}</p>
-                <h3>{item.title}</h3>
-                <div>{item.detail}</div>
-              </li>
-            ))}
-          </ol>
-        </section>
       </main>
       <Footer />
     </>
@@ -643,6 +631,8 @@ function AboutPage() {
           <div className="contact-links">
             <a href={siteConfig.github} target="_blank" rel="noreferrer">GitHub ↗</a>
             <a href="#articles">阅读文章 ↗</a>
+            <a href="#/path">学习方向 ↗</a>
+            <a href="#/site">关于此网站 ↗</a>
             <a href="#/">回到首页 ↗</a>
           </div>
         </section>
@@ -696,15 +686,98 @@ function ArticlePage({ post }: { post: Post }) {
   );
 }
 
+function PathPage() {
+  useEffect(() => {
+    document.title = `方向 · ${siteConfig.siteName}`;
+    return () => { document.title = `${siteConfig.siteName} · 个人博客`; };
+  }, []);
+
+  return (
+    <>
+      <Header />
+      <main className="about-page">
+        <header className="about-hero shell">
+          <a className="back-link" href="#/">← 返回首页</a>
+          <p className="eyebrow">LEARNING PATH</p>
+          <h1>正在走的路</h1>
+          <p className="about-lead">不追求一步到位，用可以检查的作品记录长期成长。</p>
+        </header>
+
+        <section className="about-panel shell" aria-labelledby="path-title">
+          <p className="eyebrow">NEXT</p>
+          <h2 id="path-title">三个阶段</h2>
+          <ol className="path-grid">
+            {siteConfig.learningPath.map((item, index) => (
+              <li className="path-card" key={item.stage}>
+                <span className="path-index">0{index + 1}</span>
+                <p>{item.stage}</p>
+                <h3>{item.title}</h3>
+                <div>{item.detail}</div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+function SitePage() {
+  const { title, eyebrow, lead, sections } = siteConfig.siteAbout;
+
+  useEffect(() => {
+    document.title = `关于此网站 · ${siteConfig.siteName}`;
+    return () => { document.title = `${siteConfig.siteName} · 个人博客`; };
+  }, []);
+
+  return (
+    <>
+      <Header />
+      <main className="about-page">
+        <header className="about-hero shell">
+          <a className="back-link" href="#/">← 返回首页</a>
+          <p className="eyebrow">{eyebrow}</p>
+          <h1>{title}</h1>
+          {lead ? <p className="about-lead">{lead}</p> : null}
+        </header>
+
+        {sections.map((section) => (
+          <section className="about-story shell" key={section.title}>
+            <h2>{section.title}</h2>
+            {section.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </section>
+        ))}
+
+        {sections.length === 0 && (
+          <section className="about-story shell" aria-label="待补充的网站介绍">
+            <h2>正文稍后写在这里</h2>
+            <p>这一页用来介绍网站本身。结构已经就绪，内容等你定下来再填。</p>
+          </section>
+        )}
+      </main>
+      <Footer />
+    </>
+  );
+}
+
 function App() {
   const hash = useHashRoute();
-  const isAbout = hash === "#about" || hash.startsWith("#/about");
+  const isAbout = hash === "#about" || hash === "#/about";
+  const isSite = hash === "#site" || hash === "#/site";
+  const isPath = hash === "#path" || hash === "#/path";
   const match = hash.match(/^#\/post\/([^/?]+)/);
   const post = match ? posts.find((item) => item.slug === match[1]) : undefined;
 
   let page: ReactNode;
   if (isAbout) {
     page = <AboutPage />;
+  } else if (isSite) {
+    page = <SitePage />;
+  } else if (isPath) {
+    page = <PathPage />;
   } else if (match && !post) {
     page = (
       <>
