@@ -4,7 +4,19 @@ export type PostSection =
   | { type: "quote"; text: string }
   | { type: "list"; items: string[] }
   | { type: "image"; src: string; alt: string; caption?: string; tall?: boolean }
-  | { type: "gallery"; images: { src: string; alt: string }[]; caption?: string };
+  | { type: "gallery"; images: { src: string; alt: string }[]; caption?: string }
+  | {
+      type: "schedule";
+      caption?: string;
+      days: {
+        day: string;
+        date: string;
+        weekday: string;
+        title: string;
+        image: string;
+        items: { time: string; title: string; detail?: string; place?: string; tag?: string }[];
+      }[];
+    };
 
 export type Post = {
   slug: string;
@@ -47,11 +59,75 @@ export const posts: Post[] = [
         text: "2024 年 8 月 3 日到 7 日，我在杭州参加了阿里巴巴的「全球梦想家」暑期夏令营。五天里，七十多名来自各地的大学生和研究生聚在一起，参观阿里的园区，听电商、云计算和通义千问大模型的发展，也走进公益助残项目。所有人被分成八组，每组都要用阿里的百炼平台做一款智能体，最后答辩展示。",
       },
       {
-        type: "image",
-        src: "/images/alibaba-camp/01-schedule.png",
-        alt: "2024 阿里巴巴全球梦想家日程表",
-        caption: "五天日程：从阿里文化、云和千问，到公益助残，最后是智能体答辩。",
-        tall: true,
+        type: "schedule",
+        caption: "五天日程。图是每天原海报，下面是同一份场次，字可以看清。",
+        days: [
+          {
+            day: "01",
+            date: "8.3",
+            weekday: "周一",
+            title: "阿里文化之旅 / AI时代的商业",
+            image: "/images/alibaba-camp/01-schedule-day1.png",
+            items: [
+              { time: "09:30–10:10", title: "参观 9 号馆", detail: "赫本 / 原霞 · 阿里巴巴集团对外联络部副总监", place: "9号馆" },
+              { time: "10:10–11:30", title: "感受阿里文化：合伙人面对面", detail: "闻佳 · 阿里巴巴合伙人 / 集团公共事务总裁", place: "9号馆" },
+              { time: "13:30–14:30", title: "学员组队成团 + 团队展示", place: "A区访客中心-202N仙剑山庄" },
+              { time: "14:40–15:40", tag: "AI技能", title: "从搜索框到对话框：淘天探索 AI 电商新体验", detail: "陈畅言 · 淘天集团业务发展中心总监", place: "A区访客中心-202N仙剑山庄" },
+              { time: "16:00–17:30", title: "淘宝直播 — 品质直播方法论", detail: "吕俐颖 · 交个朋友淘宝事业线选品中心副总监", place: "A区访客中心-202N仙剑山庄" },
+            ],
+          },
+          {
+            day: "02",
+            date: "8.4",
+            weekday: "周二",
+            title: "AI 科技探寻",
+            image: "/images/alibaba-camp/01-schedule-day2.png",
+            items: [
+              { time: "09:30–10:30", title: "云谷之旅 — 参观阿里云展厅", detail: "金桦 · 阿里云智能集团客户工作部主任", place: "云谷展厅" },
+              { time: "10:45–12:00", tag: "AI技能", title: "千问 — AI to C 大模型发展与应用", detail: "危晓桐 · 阿里千问事业部公共事务总监", place: "云谷园区访客中心 352 会议室" },
+              { time: "13:30–14:30", tag: "AI实训", title: "千问办公 — AI 时代的办公搭子", detail: "姜和 · 千问办公产品经理", place: "云谷园区访客中心 352 会议室" },
+              { time: "14:40–16:00", tag: "AI实训", title: "AI 时代的模型评测和数据标注", detail: "苗林林 · 阿里数据晓天衡宇产品负责人", place: "云谷园区访客中心 352 会议室" },
+              { time: "16:00–17:30", tag: "AI实训", title: "百炼 — 个性化 Agent 搭建实操，为周五结业智能体创作大赛预演", detail: "王文捷 · 阿里云智能集团战略发展总监", place: "云谷园区访客中心 352 会议室" },
+            ],
+          },
+          {
+            day: "03",
+            date: "8.5",
+            weekday: "周三",
+            title: "智能经济和数字生活",
+            image: "/images/alibaba-camp/01-schedule-day3.png",
+            items: [
+              { time: "09:30–11:00", title: "闪购与新就业形态 — 骑手和商家代表面对面", detail: "圣美莉 · 淘宝闪购党办主任 / 黄晓琴 · 淘宝闪购城市骑手代言人", place: "C区访客中心-青玉案阶梯教室" },
+              { time: "11:00–12:00", title: "电商与消费者权益保护", detail: "王维 · 阿里集团政府事务部总监", place: "C区访客中心-青玉案阶梯教室" },
+              { time: "14:00–15:00", tag: "AI技能", title: "AI 原生的科研范式", detail: "胡锐 · 阿里云高校合作专家", place: "浙江大学艺术与考古博物馆报告厅" },
+              { time: "15:00–16:00", title: "高校 AI 社区与 AI 时代的创业和职业发展", detail: "石弘毅 · 浙江大学AI生态资源对接部", place: "浙江大学艺术与考古博物馆报告厅" },
+              { time: "16:00–17:00", title: "浙大自由参观", detail: "自由活动", place: "浙江大学-紫金港校区" },
+            ],
+          },
+          {
+            day: "04",
+            date: "8.6",
+            weekday: "周四",
+            title: "公益 · 智能向善",
+            image: "/images/alibaba-camp/01-schedule-day4.png",
+            items: [
+              { time: "09:30–10:30", title: "阿里乡村振兴案例分享", detail: "陆昕 · 阿里巴巴集团助力乡村振兴办公室主任", place: "C区访客中心-青玉案阶梯教室" },
+              { time: "10:40–12:00", title: "阿里星学长面对面 — AI 时代的学业和职业", detail: "邱中炜 · 达摩院 AI 医疗技术团队", place: "C区访客中心-青玉案阶梯教室" },
+              { time: "14:00–17:00", title: "余杭融爱助残中心参观及科技助残分享交流", detail: "申志民 · 阿里公益扶老助残负责人", place: "余杭融爱中心" },
+            ],
+          },
+          {
+            day: "05",
+            date: "8.7",
+            weekday: "周五",
+            title: "分组答辩 + 结业",
+            image: "/images/alibaba-camp/01-schedule-day5.png",
+            items: [
+              { time: "09:30–12:00", tag: "AI实训", title: "分组共创，完成智能体搭建，准备下午答辩", detail: "自由活动", place: "C区访客中心-青玉案阶梯教室" },
+              { time: "13:30–17:30", tag: "AI实训", title: "结业答辩：Agent Creator 智能体创作大赛", detail: "分组展示成果，评委评分并颁奖。阿里高级评委 4 位。", place: "C区访客中心-青玉案阶梯教室" },
+            ],
+          },
+        ],
       },
       { type: "heading", text: "这五天听了什么" },
       {

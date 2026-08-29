@@ -683,6 +683,38 @@ function ArticlePage({ post }: { post: Post }) {
                 </figure>
               );
             }
+            if (section.type === "schedule") {
+              return (
+                <figure className="article-schedule" key={index}>
+                  <div>
+                    {section.days.map((day) => (
+                      <section key={day.day}>
+                        <a href={day.image} target="_blank" rel="noreferrer">
+                          <img src={day.image} alt={`${day.date} ${day.title}`} />
+                        </a>
+                        <p>
+                          <span>DAY {day.day}</span>
+                          <time>{day.date} {day.weekday}</time>
+                        </p>
+                        <h3>{day.title}</h3>
+                        <ul>
+                          {day.items.map((item) => (
+                            <li key={`${day.day}-${item.time}`}>
+                              <strong>{item.time}</strong>
+                              {item.tag ? <em>{item.tag}</em> : null}
+                              <b>{item.title}</b>
+                              {item.detail ? <span>{item.detail}</span> : null}
+                              {item.place ? <span>{item.place}</span> : null}
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    ))}
+                  </div>
+                  {section.caption ? <figcaption>{section.caption}</figcaption> : null}
+                </figure>
+              );
+            }
             if (section.type === "gallery") {
               return (
                 <figure className={`article-gallery${section.images.length > 2 ? " article-gallery-many" : ""}`} key={index}>
