@@ -677,7 +677,7 @@ function ArticlePage({ post }: { post: Post }) {
             );
             if (section.type === "image") {
               return (
-                <figure className="article-figure" key={index}>
+                <figure className={`article-figure${section.tall ? " article-figure-tall" : ""}`} key={index}>
                   <img src={section.src} alt={section.alt} />
                   {section.caption ? <figcaption>{section.caption}</figcaption> : null}
                 </figure>
@@ -685,7 +685,7 @@ function ArticlePage({ post }: { post: Post }) {
             }
             if (section.type === "gallery") {
               return (
-                <figure className="article-gallery" key={index}>
+                <figure className={`article-gallery${section.images.length > 2 ? " article-gallery-many" : ""}`} key={index}>
                   <div>
                     {section.images.map((image) => (
                       <img src={image.src} alt={image.alt} key={image.src} />
@@ -699,18 +699,18 @@ function ArticlePage({ post }: { post: Post }) {
           })}
           {post.externalUrl && (
             <div className="article-start">
-              <p>看完上面的简介，可以从这里进入学习页。</p>
+              <p>{post.ctaHint ?? "看完上面的简介，可以从这里进入学习页。"}</p>
               <a className="button button-primary" href={post.externalUrl} target="_blank" rel="noreferrer">
-                开始学习 <span aria-hidden="true">→</span>
+                {post.ctaLabel ?? "开始学习"} <span aria-hidden="true">→</span>
               </a>
             </div>
           )}
-          <div className="article-end">{post.externalUrl ? "先读简介，再开始学" : "完 · 感谢阅读"}</div>
+          <div className="article-end">{post.externalUrl ? (post.ctaLabel ? "完 · 感谢阅读" : "先读简介，再开始学") : "完 · 感谢阅读"}</div>
         </article>
         <nav className="article-next shell" aria-label="文章结尾导航">
           <a href="#/">← 查看全部文章</a>
           {post.externalUrl ? (
-            <a href={post.externalUrl} target="_blank" rel="noreferrer">开始学习 ↗</a>
+            <a href={post.externalUrl} target="_blank" rel="noreferrer">{post.ctaLabel ?? "开始学习"} ↗</a>
           ) : (
             <a href={siteConfig.github} target="_blank" rel="noreferrer">访问 GitHub ↗</a>
           )}

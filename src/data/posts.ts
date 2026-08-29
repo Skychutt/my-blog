@@ -3,7 +3,7 @@ export type PostSection =
   | { type: "paragraph"; text: string }
   | { type: "quote"; text: string }
   | { type: "list"; items: string[] }
-  | { type: "image"; src: string; alt: string; caption?: string }
+  | { type: "image"; src: string; alt: string; caption?: string; tall?: boolean }
   | { type: "gallery"; images: { src: string; alt: string }[]; caption?: string };
 
 export type Post = {
@@ -17,11 +17,137 @@ export type Post = {
   featured?: boolean;
   number: string;
   externalUrl?: string;
+  ctaLabel?: string;
+  ctaHint?: string;
   coverImage?: { src: string; alt: string };
   sections: PostSection[];
 };
 
 export const posts: Post[] = [
+  {
+    slug: "alibaba-global-dreamers-2024",
+    title: "全球梦想家：五天杭州，重新认识阿里",
+    excerpt:
+      "八月初在杭州参加阿里巴巴全球梦想家夏令营。听完电商、云计算和千问，也做了私人 AI 营养师，最后还去了西湖。项目展示页可以打开看。",
+    category: "成长",
+    date: "2024-08-08",
+    displayDate: "2024.08.08",
+    readingTime: "约 8 分钟",
+    number: "07",
+    externalUrl: "https://skychutt.github.io/ai-nutritionist-presentation/",
+    ctaLabel: "查看营养师展示",
+    ctaHint: "智能体后来做成了一页演示，可以从这里打开。",
+    coverImage: {
+      src: "/images/alibaba-camp/03-lecture-hall.png",
+      alt: "全球梦想家夏令营讲座现场",
+    },
+    sections: [
+      {
+        type: "paragraph",
+        text: "2024 年 8 月 3 日到 7 日，我在杭州参加了阿里巴巴的「全球梦想家」暑期夏令营。五天里，七十多名来自各地的大学生和研究生聚在一起，参观阿里的园区，听电商、云计算和通义千问大模型的发展，也走进公益助残项目。所有人被分成八组，每组都要用阿里的百炼平台做一款智能体，最后答辩展示。",
+      },
+      {
+        type: "image",
+        src: "/images/alibaba-camp/01-schedule.png",
+        alt: "2024 阿里巴巴全球梦想家日程表",
+        caption: "五天日程：从阿里文化、云和千问，到公益助残，最后是智能体答辩。",
+        tall: true,
+      },
+      { type: "heading", text: "这五天听了什么" },
+      {
+        type: "paragraph",
+        text: "日程排得很满。有阿里的电商发展史，有云计算，有通义千问大模型，也有钉钉、本地生活这些业务怎么和 AI 接在一起。对我来说，这些讲座最有用的不是记下一串产品名，而是看见一家公司怎样把生意、技术和组织放在同一条线上讲。以前上课接触的多是工具本身，很少听到工具背后那套活着的业务。",
+      },
+      {
+        type: "gallery",
+        caption: "讲座现场。一边听阿里的发展，一边听云和模型怎么落到具体业务里。",
+        images: [
+          { src: "/images/alibaba-camp/03-lecture-hall.png", alt: "报告厅听讲" },
+          { src: "/images/alibaba-camp/04-lecture-talk.png", alt: "发展大事记讲座" },
+        ],
+      },
+      { type: "heading", text: "第一组，私人 AI 营养师" },
+      {
+        type: "paragraph",
+        text: "我被分到第一组。组员来自全国各地，有人在美国读书，有人在英国，也有人在国内。专业也不一样：我是软件工程，还有电气工程、数据处理、艺术和传媒。大家各做各擅长的部分，讨论的时候反而比同专业扎堆更清楚——谁能把需求说清楚，谁能把流程画出来，谁能在百炼上把智能体搭起来。",
+      },
+      {
+        type: "image",
+        src: "/images/alibaba-camp/05-group.png",
+        alt: "第一组同学在一起",
+        caption: "第一组。来自不同城市、不同专业，五天里围着同一个智能体转。",
+      },
+      {
+        type: "paragraph",
+        text: "我们做的是「私人 AI 营养师」。按减脂、增肌这些需求给饮食建议，也能看一张餐食照片，估热量，再给建议。另外还能按位置推荐附近合适的餐厅。以后还想做成能直接点外卖。想法不复杂，但正好把大模型、识图和本地生活串在一条链上，也跟我们这几天听到的内容对得上。后来我把这套智能体做成了网页展示，讲背景、能力和百炼工作流，地址是 https://skychutt.github.io/ai-nutritionist-presentation/ 。文末也可以直接打开。",
+      },
+      {
+        type: "gallery",
+        caption: "答辩现场。我们把营养师智能体的流程讲了一遍。",
+        images: [
+          { src: "/images/alibaba-camp/07-defense-team.png", alt: "小组答辩合影" },
+          { src: "/images/alibaba-camp/08-defense-talk.png", alt: "讲解营养师智能体流程" },
+        ],
+      },
+      {
+        type: "paragraph",
+        text: "最终成绩并不理想。评委觉得想法创新性不够，这个判断我认。市场上类似的饮食建议已经不少，我们更多是把现成能力接到一个场景里，没有拿出更硬的差异。不过设计过程里组员都把各自的特长用上了，我也第一次完整走了一遍：定题目、拆模块、在百炼上实现、再站上去讲。成绩不漂亮，这五天没有白过。",
+      },
+      { type: "heading", text: "我对阿里的看法变了" },
+      {
+        type: "paragraph",
+        text: "以前一提阿里，我脑子里就是淘宝、闲鱼。这几天听下来，才知道它远不止电商。云计算已经做到亚洲很大的体量，也撑着国内云服务很大一块；电商平台本身还在推着零售和就业往前走；通义千问大模型也走到了全球比较靠前的位置。这些加在一起，才是现在的阿里，不是一个购物 App 的别名。",
+      },
+      {
+        type: "paragraph",
+        text: "最触动我的是公益助残。我们去了高科技辅具展示体验中心，听他们怎么用无障碍导航、智能眼镜、轮椅这些东西，把残疾人生活里的门槛降下来。阿里每年在这件事上投的不只是口号。对骑手，也不是只把他们当运力，而是当成要被看见的人。以前我觉得大公司讲社会责任，多半是宣传；站在展厅里看完，才会知道这些项目是有人、有物、有持续投入的。",
+      },
+      {
+        type: "gallery",
+        caption: "公益助残。听讲解，也上手体验他们做出来的辅具。",
+        images: [
+          { src: "/images/alibaba-camp/02-assistive-hall.png", alt: "高科技辅具展示体验中心" },
+          { src: "/images/alibaba-camp/06-assistive-tech.png", alt: "体验无障碍科技" },
+        ],
+      },
+      {
+        type: "paragraph",
+        text: "伟大两个字有点重，但敬佩是真的。它也成了我后面想靠近、想追的一家企业。不是听完就立下一个空目标，而是知道自己学软件工程，以后如果有机会做云、做大模型应用、做真正能落到人身上的产品，这家公司是一个值得对照的方向。",
+      },
+      { type: "heading", text: "后来去了西湖" },
+      {
+        type: "paragraph",
+        text: "行程结束后，我专门留时间去了西湖。那天不是大晴天，云压得比较低，湖面是灰绿的，风一过就起细纹。远处的山蒙着一层薄雾，柳条垂到水边，荷叶铺开，偶尔能看见雷峰塔的轮廓。岸边有人坐着看湖，游船慢慢开过去。杭州把公司和湖放在同一座城市里，从园区走到湖边，节奏一下就换了。",
+      },
+      {
+        type: "paragraph",
+        text: "苏轼写过《饮湖上初晴后雨》：「水光潋滟晴方好，山色空蒙雨亦奇。欲把西湖比西子，淡妆浓抹总相宜。」晴天的西湖当然好看，水会亮。我碰到的是后半句那种天气：山色空蒙，水也不吵。诗里把西湖比作西子，淡妆浓抹都合适。阴天并不亏，它只是换了一种样子。",
+      },
+      {
+        type: "gallery",
+        caption: "西湖。阴天，山色空蒙，水光也不闹。",
+        images: [
+          { src: "/images/alibaba-camp/09-westlake-1.png", alt: "西湖远山" },
+          { src: "/images/alibaba-camp/10-westlake-2.png", alt: "柳枝与湖水" },
+          { src: "/images/alibaba-camp/11-westlake-3.png", alt: "湖心山与塔" },
+          { src: "/images/alibaba-camp/12-westlake-4.png", alt: "柳岸与亭廊" },
+          { src: "/images/alibaba-camp/13-westlake-5.png", alt: "荷花" },
+          { src: "/images/alibaba-camp/14-westlake-6.png", alt: "湖上画舫" },
+          { src: "/images/alibaba-camp/15-westlake-7.png", alt: "对岸山色" },
+          { src: "/images/alibaba-camp/16-westlake-8.png", alt: "湖面与荷叶" },
+          { src: "/images/alibaba-camp/17-westlake-9.png", alt: "木栈道看湖" },
+        ],
+      },
+      {
+        type: "quote",
+        text: "水光潋滟晴方好，山色空蒙雨亦奇。欲把西湖比西子，淡妆浓抹总相宜。",
+      },
+      {
+        type: "paragraph",
+        text: "五天听的是云、模型和公益，站在湖边时这些都暂时远了一点。我没有非要在湖边总结出什么道理，只是把那几天看到的水、山和塔拍下来。回去以后再看这些照片，夏令营和西湖是连在一起的：一边是一家我想追的公司，一边是这座城市自己的样子。",
+      },
+    ],
+  },
   {
     slug: "flask-jquery-fullstack-guide",
     title: "Flask 与 jQuery 全栈手册：给大三上网站开发课的预习",

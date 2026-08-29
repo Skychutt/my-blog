@@ -1135,6 +1135,9 @@ main { position: relative; z-index: 2; }
   object-fit: contain;
   background: var(--paper-raised);
 }
+.article-figure-tall img {
+  max-height: 920px;
+}
 .article-figure,
 .article-gallery {
   margin: 36px 0;
@@ -1156,6 +1159,17 @@ main { position: relative; z-index: 2; }
   height: 220px;
   object-fit: cover;
   background: color-mix(in srgb, var(--paper-raised) 80%, transparent);
+}
+.article-gallery-many > div {
+  grid-template-columns: 1fr 1fr;
+}
+@media (min-width: 720px) {
+  .article-gallery-many > div {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .article-gallery-many img {
+    height: 200px;
+  }
 }
 .article-start {
   display: grid;
