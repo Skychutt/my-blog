@@ -176,8 +176,8 @@ export const posts: Post[] = [
     excerpt:
       "今年八月去杭州参加了阿里巴巴全球梦想家夏令营。听完电商、云和千问，跟组员做了私人 AI 营养师，最后还去了西湖。",
     category: "成长",
-    date: "2026-08-08",
-    displayDate: "2026.08.08",
+    date: "2026-08-30",
+    displayDate: "2026.08.30",
     readingTime: "约 11 分钟",
     number: "07",
     externalUrl: "https://skychutt.github.io/ai-nutritionist-presentation/",
