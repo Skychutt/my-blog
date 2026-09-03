@@ -1131,12 +1131,14 @@ main { position: relative; z-index: 2; }
   border: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
 }
 .article-figure img {
-  max-height: 340px;
-  object-fit: contain;
-  background: var(--paper-raised);
+  width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: cover;
+  background: transparent;
 }
 .article-figure-tall img {
-  max-height: 920px;
+  max-height: none;
 }
 .article-figure,
 .article-gallery {
