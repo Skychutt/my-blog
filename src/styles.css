@@ -1402,8 +1402,8 @@ main { position: relative; z-index: 2; }
 .share-modal-preview {
   overflow: hidden;
   border-radius: 18px;
-  background: #efeae2;
-  box-shadow: 0 18px 40px rgba(20, 30, 40, .12);
+  background: var(--paper-raised);
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--ink) 12%, transparent);
 }
 .share-modal-preview img {
   display: block;
