@@ -8,8 +8,10 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
+import { CommentBoard } from "./CommentBoard";
 import { categories, posts, type Post } from "./data/posts";
 import { SeasonGame } from "./SeasonGame";
+import { ShareCard } from "./ShareCard";
 import { siteConfig } from "./site.config";
 
 type Category = (typeof categories)[number];
@@ -738,6 +740,8 @@ function ArticlePage({ post }: { post: Post }) {
             </div>
           )}
           <div className="article-end">{post.externalUrl ? (post.ctaLabel ? "完 · 感谢阅读" : "先读简介，再开始学") : "完 · 感谢阅读"}</div>
+          <ShareCard post={post} />
+          <CommentBoard slug={post.slug} />
         </article>
         <nav className="article-next shell" aria-label="文章结尾导航">
           <a href="#/">← 查看全部文章</a>
